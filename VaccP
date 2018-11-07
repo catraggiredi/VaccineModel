@@ -1,0 +1,84 @@
+def CheckVacc(covU=0.5, covR=0.5, migpor=0.5, br=(18.1/1000), R0=18, SaU=0.5,SbU=0.5,ScU=0.5,SdU=0.5,SeU=0.5,SaR=0.5,SbR=0.5,ScR=0.5,SdR=0.5,SeR=0.5,VbU=0.5,VcU=0.5,VdU=0.5,VeU=0.5,VbR=0.5,VcR=0.5,VdR=0.5,VeR=0.5,survaU=0.5,survbU=0.5,surbcU=0.5,survcU=0.5,survdU=0.5,surveU=0.5,survaR=0.5,survbR=0.5,survcR=0.5,survdR=0.5,surveR=0.5):
+    '''
+    cov - coverage
+    migpor - migration rate
+    br - birth rate. Currently set to stock value given world average
+    R0 = Rnought value for a given disease. Currently set to 18 for measles
+    SaU - This variable and similar variables begin with either an S or a V to show susceptibility vs vaccination, then a letter between a-e to show the age group, and either a U or an R to show urban vs rural populations.
+    surv__ - variables beginning with this are the survival rates for age groups a-e in populations U and V
+    
+    In the below code, variables like SaUt show the next value of SaU in time step t
+    '''
+    #Vaccination rate at birth is 0 for both rural and urban populations
+    VaR = 0
+    VaU = 0
+    
+    #Newborn Pop relative to population of group C
+    SaUt = br * (ScU + VcU) 
+    
+    SbUt = (survbU * .75 * SbU) + (survaU * (1 - covU) * SaU)
+    VbUt = (survbU * .75 * VbU) + (survaU * covU * VaU)
+    
+    ScUt = (survcU * (14 / 15) * ScU) + (survbU * .25 * SbU)
+    VcUt = (survcU * (14 / 15) * VcU) + (survbU * .25 * VbU)
+    
+    migration = (br / migpor) * survdR * SdR
+    migrationvacc = (br / migpor) * survdR * VdR
+    
+    SdUt = (survdU * (29 / 30) * SdU) + (survcU * ScU / 15) + migration
+    VdUt = (survdU * (29 / 30) * VdU) + (survcU * VcU / 15) + migrationvacc
+    
+    SeUt = (surveU * SeU) + (survdU * SdU / 30)
+    VeUt = (surveU * VeU) + (survdU * VdU / 30)
+    
+    SaRt = br * (ScR + VcR)
+    
+    SbRt = (survbR * .75 * SbR) + (survaR * (1 - covR) * SaR)
+    VbRt = (survbR * .75 * VbR) + (survaR * covR * SaR)
+    
+    ScRt = (survcR * (14 / 15) * ScR) + (survbR * .25 * SbR)
+    VcRt = (survcR * (14 / 15) * VcR) + (survbR * .25 * VbR)
+    
+    SdRt = (survdR * (29 / 30) * SdR) + (survcR * ScR / 15) - migration
+    VdRt = (survdR * (29 / 30) * VdR) + (survcR * VcR / 15) - migrationvacc
+    
+    SeRt = (surveR * SeR) + (survdR * SdR / 30)
+    VeRt = (surveR * VeR) + (survdR * VdR / 30)
+    
+    '''
+    Given the Rnought value look for the new R susceptible value to calculate how it
+    is influenced by vaccination rate
+    '''
+    MinVacc = 1 - (1 / R0)
+    TotVacc = VbUt + VcUt + VdUt + VeUt #VaUt is 0
+    print(TotVacc > MinVacc)
+    return(TotVacc > MinVacc)
+    
+    
+def lowestVacc(covU=0.5, covR=0.5, migpor=0.5, br=(18.1/1000), R0=18, SaU=0.5,SbU=0.5,ScU=0.5,SdU=0.5,SeU=0.5,SaR=0.5,SbR=0.5,ScR=0.5,SdR=0.5,SeR=0.5,VbU=0.5,VcU=0.5,VdU=0.5,VeU=0.5,VbR=0.5,VcR=0.5,VdR=0.5,VeR=0.5,survaU=0.5,survbU=0.5,surbcU=0.5,survcU=0.5,survdU=0.5,surveU=0.5,survaR=0.5,survbR=0.5,survcR=0.5,survdR=0.5,surveR=0.5):
+    
+    #Is VaU/R always 0?
+    
+    VaU = 0
+    
+    MinVacc = 1 - (1 / R0)
+    #We need VbUt + VcUt + VdUt + VeUt to be over MinVacc
+    SaUt = br * (ScU + VcU) 
+    
+    SbUt = (survbU * .75 * SbU) + (survaU * (1 - covU) * SaU)
+    VbUt = (survbU * .75 * VbU) + (survaU * covU * VaU)
+    
+    ScUt = (survcU * (14 / 15) * ScU) + (survbU * .25 * SbU)
+    VcUt = (survcU * (14 / 15) * VcU) + (survbU * .25 * VbU)
+    
+    VdUt = (survdU * (29 / 30) * VdU) + (survcU * VcU / 15)
+    
+    SeUt = (surveU * SeU) + (survdU * SdU / 30)
+    VeUt = (surveU * VeU) + (survdU * VdU / 30)
+    
+    
+    NeededMig = MinVacc- (VbUt + VcUt + VdUt + VeUt)
+    
+    lowestVacc = NeededMig * migpor / br / survdR #Finds lowest VdR needed for MinVacc to be met
+    print(lowestVacc)
+    return(lowestVacc)
