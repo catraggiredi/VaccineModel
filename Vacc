@@ -1,7 +1,11 @@
-def NextStep(covU=0.1, covR=0.1, migpor=0.1, br=(18.1/1000), R0=5, SaU=0.1,SbU=0.1,ScU=0.1,SdU=0.1,SeU=0.1,SaR=0.1,SbR=0.1,ScR=0.1,SdR=0.1,SeR=0.1,VbU=0.125,VcU=0.125,VdU=0.125,VeU=0.125,VbR=0.125,VcR=0.125,VdR=0.125,VeR=0.125,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9):
+'''
+THIS CODE IS STILL IN PROCESS AND IS CURRENTLY UNFINISHED. Certain functions still do not produce the desired output or are faulty
+'''
+
+def NextStep(covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9):
     '''
     cov - coverage
-    migpor - migration rate
+    migpar - migration parameter relative to birth rate
     br - birth rate. Currently set to stock value given world average
     R0 = Rnought value for a given disease. Currently set to 18 for measles
     SaU - This variable and similar variables begin with either an S or a V to show susceptibility vs vaccination, then a letter between a-e to show the age group, and either a U or an R to show urban vs rural populations.
@@ -21,8 +25,8 @@ def NextStep(covU=0.1, covR=0.1, migpor=0.1, br=(18.1/1000), R0=5, SaU=0.1,SbU=0
     ScUt = (survcU * (14 / 15) * ScU) + (survbU * 0.15 * SbU)
     VcUt = (survcU * (14 / 15) * VcU) + (survbU * 0.15 * VbU)
     
-    migration = (br / migpor) * survdR * SdR
-    migrationvacc = (br / migpor) * survdR * VdR
+    migration = migpar* survdR * SdR
+    migrationvacc = migpar * survdR * VdR
     
     SdUt = (survdU * (29 / 30) * SdU) + (survcU * ScU / 15) + migration
     VdUt = (survdU * (29 / 30) * VdU) + (survcU * VcU / 15) + migrationvacc
@@ -33,23 +37,23 @@ def NextStep(covU=0.1, covR=0.1, migpor=0.1, br=(18.1/1000), R0=5, SaU=0.1,SbU=0
     SaRt = br * (ScR + VcR)
     
     SbRt = (survbR * .75 * SbR) + (survaR * (1 - covR) * SaR)
-    VbRt = (survbR * .75 * VbR) + (survaR * covR * SaR)
+    VbRt = (survbR * .75 * VbR) + (survaR * covR * VaR)
     
     ScRt = (survcR * (14 / 15) * ScR) + (survbR * 0.15 * SbR)
     VcRt = (survcR * (14 / 15) * VcR) + (survbR * 0.15 * VbR)
     
-    SdRt = (survdR * (29 / 30) * SdR) + (survcR * ScR / 15) - migration
-    VdRt = (survdR * (29 / 30) * VdR) + (survcR * VcR / 15) - migrationvacc
+    SdRt = (survdR * (29 / 30) * SdR * (1 - migpar)) + (survcR * ScR / 15)
+    VdRt = (survdR * (29 / 30) * VdR * (1-migpar)) + (survcR * VcR / 15)
     
     SeRt = (surveR * SeR) + (survdR * SdR / 30)
     VeRt = (surveR * VeR) + (survdR * VdR / 30)
-
+    
     UrbanVaccRates = [VaU, VbUt, VcUt, VdUt, VeUt]
     UrbanSuscRates = [SaUt, SbUt, ScUt, VcUt, VeRt]
-
+    
     RuralVaccRates = [VaR, VbRt, VcRt, VdRt, VeRt]
     RuralSuscRates = [SaRt, SbRt, ScRt, SdRt, SeRt]
-
+    
     TotalUrb = sum(UrbanVaccRates) + sum(UrbanSuscRates)
     TotalRur = sum(RuralVaccRates) + sum(RuralSuscRates)
     
@@ -60,15 +64,15 @@ def NextStep(covU=0.1, covR=0.1, migpor=0.1, br=(18.1/1000), R0=5, SaU=0.1,SbU=0
         
         RuralVaccRates[i] = RuralVaccRates[i] / TotalRur
         RuralSuscRates[i] = RuralSuscRates[i] / TotalRur
-        
+    
     UrbanRates = (UrbanSuscRates, UrbanVaccRates)
     RuralRates = (RuralSuscRates, RuralVaccRates)
     
     return(UrbanRates, RuralRates)
 
-def HerdImmunity(covU=0.1, covR=0.1, migpor=0.1, br=(18.1/1000), R0=9, SaU=0.1,SbU=0.1,ScU=0.1,SdU=0.1,SeU=0.1,SaR=0.1,SbR=0.1,ScR=0.1,SdR=0.1,SeR=0.1,VbU=0.1,VcU=0.1,VdU=0.1,VeU=0.1,VbR=0.1,VcR=0.1,VdR=0.1,VeR=0.1,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9):
-
-    Urban, Rural = NextStep(covU, covR, migpor, br, R0, SaU, SbU, ScU, SdU, SeU, SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, survcU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR) 
+def HerdImmunity(covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9):
+    
+    Urban, Rural = NextStep(covU, covR, migpar, br, R0, SaU, SbU, ScU, SdU, SeU, SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, survcU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR) 
     '''
     Given the Rnought value look for the new R susceptible value to calculate how it
     is influenced by vaccination rate
@@ -78,13 +82,13 @@ def HerdImmunity(covU=0.1, covR=0.1, migpor=0.1, br=(18.1/1000), R0=9, SaU=0.1,S
     print(TotVacc > MinVacc)
     return(TotVacc > MinVacc)
 
-def OverTime(t, covU=0.1, covR=0.1, migpor=0.1, br=(18.1/1000), R0=5, SaU=0.1,SbU=0.1,ScU=0.1,SdU=0.1,SeU=0.1,SaR=0.1,SbR=0.1,ScR=0.1,SdR=0.1,SeR=0.1,VbU=0.1,VcU=0.1,VdU=0.1,VeU=0.1,VbR=0.1,VcR=0.1,VdR=0.1,VeR=0.1,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9):
+def OverTime(t, covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9):
 
     for i in range(1, t+1):
         if i == t:
-            return(NextStep(covU, covR, migpor, br, R0, SaU, SbU, ScU, SdU, SeU, SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, surbcU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR))
+            return(NextStep(covU, covR, migpar, br, R0, SaU, SbU, ScU, SdU, SeU, SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, surbcU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR))
         else:
-            Urban, Rural = NextStep(covU, covR, migpor, br, R0, SaU, SbU, ScU, SdU, SeU, SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, surbcU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR)
+            Urban, Rural = NextStep(covU, covR, migpar, br, R0, SaU, SbU, ScU, SdU, SeU, SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, surbcU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR)
             
             SaU = Urban[0][0]
             SbU = Urban[0][1]
@@ -108,33 +112,34 @@ def OverTime(t, covU=0.1, covR=0.1, migpor=0.1, br=(18.1/1000), R0=5, SaU=0.1,Sb
             VdR = Rural[1][3]
             VeR = Rural[1][4]   
 
-def LowestVacc(t, covU=0.1, covR=0.1, migpor=0.1, br=(18.1/1000), R0=5, SaU=0.1,SbU=0.1,ScU=0.1,SdU=0.1,SeU=0.1,SaR=0.1,SbR=0.1,ScR=0.1,SdR=0.1,SeR=0.1,VbU=0.1,VcU=0.1,VdU=0.1,VeU=0.1,VbR=0.1,VcR=0.1,VdR=0.1,VeR=0.1,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9):
+def LowestVacc(covU, Rural, migpar, R0):
     '''
-    Inputs data about a population and its associated rates and outputs the lowest vaccination rate needed in the migrating community in order to sustain herd immunity.
+    migpar = percentage of people in Rural age group D that migrate
     '''
-    coverage = covU
-    migration = migpor
-    Urban, Rural = OverTime(t, covU=coverage, migpor=migration)
-    MinVacc = 0.8
-    #MinVacc = 1 - (1/R0)
-    TotalVacc = sum(Urban[1])
-    AddedVacc = MinVacc - TotalVacc
-    print
-    lowestVacc = AddedVacc * migpor / survdR #Finds lowest VdR needed for MinVacc to be met
-    return(lowestVacc)
+    herd = 0.8
+    TotalMig = migpar * (Rural[0][3] + Rural[1][3])
+    LowestVacc = ((herd * (1 + TotalMig))-covU) / TotalMig
+    if LowestVacc < 0:
+        return(0)
+    elif LowestVacc > 1:
+        return(1)
+    else:
+        return(LowestVacc)
 
-def heatmapmatrix(t, covU=0.5, covR=0.5, migpor=0.5, br=(18.1/1000), R0=18, SaU=0.5,SbU=0.5,ScU=0.5,SdU=0.5,SeU=0.5,SaR=0.5,SbR=0.5,ScR=0.5,SdR=0.5,SeR=0.5,VbU=0.5,VcU=0.5,VdU=0.5,VeU=0.5,VbR=0.5,VcR=0.5,VdR=0.5,VeR=0.5,survaU=0.5,survbU=0.5,surbcU=0.5,survcU=0.5,survdU=0.5,surveU=0.5,survaR=0.5,survbR=0.5,survcR=0.5,survdR=0.5,surveR=0.5):
+def heatmapmatrix(t, covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9):
 	matrix = []
 	for i in range(0, 5):
-		var2 = (i * 0.01) + 0.75
+		newcoverage = (i * 0.01) + 0.75
 		row = []
-		for j in range(1, 5):
-			var = j * 0.1
-			rate = LowestVacc(t, var2, covR=0.5, migpor=var, br=(18.1/1000), R0=18, SaU=0.5,SbU=0.5,ScU=0.5,SdU=0.5,SeU=0.5,SaR=0.5,SbR=0.5,ScR=0.5,SdR=0.5,SeR=0.5,VbU=0.5,VcU=0.5,VdU=0.5,VeU=0.5,VbR=0.5,VcR=0.5,VdR=0.5,VeR=0.5,survaU=0.5,survbU=0.5,surbcU=0.5,survcU=0.5,survdU=0.5,surveU=0.5,survaR=0.5,survbR=0.5,survcR=0.5,survdR=0.5,surveR=0.5)
+		for j in range(1, 6):
+			newmigration = j * 0.1 #migpar being increased
+			Urban, Rural = NextStep(covU=0.85, covR=0.8, migpar=newmigration, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9)
+			rate = LowestVacc(newcoverage, Rural, newmigration, R0)
 			row.append(rate)
 		matrix.append(row)
 	return(matrix)
 	
-x = heatmapmatrix(1)
-for i in x:
-    print(i)
+z = OverTime(1000, covU=0.1, covR=0.1, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.1,SbU=0.1,ScU=0.1,SdU=0.1,SeU=0.1,SaR=0.1,SbR=0.1,ScR=0.1,SdR=0.1,SeR=0.1,VbU=0.125,VcU=0.125,VdU=0.125,VeU=0.125,VbR=0.125,VcR=0.125,VdR=0.125,VeR=0.125,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9)
+print(z)
+y = list(range(75, 100))
+x = list(range(0, 40))
