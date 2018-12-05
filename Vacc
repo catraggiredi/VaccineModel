@@ -1,6 +1,9 @@
 '''
 THIS CODE IS STILL IN PROCESS AND IS CURRENTLY UNFINISHED. Certain functions still do not produce the desired output or are faulty
 '''
+import numpy as np
+import seaborn
+import matplotlib.pyplot as plt
 
 def NextStep(covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9):
     '''
@@ -79,7 +82,6 @@ def HerdImmunity(covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06
     '''
     MinVacc = 1 - (1 / R0)
     TotVacc = Urban[1][1] + Urban[1][2] + Urban[1][3] + Urban[1][4]
-    print(TotVacc > MinVacc)
     return(TotVacc > MinVacc)
 
 def OverTime(t, covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9):
@@ -138,8 +140,11 @@ def heatmapmatrix(t, covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=
 			row.append(rate)
 		matrix.append(row)
 	return(matrix)
-	
-z = OverTime(1000, covU=0.1, covR=0.1, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.1,SbU=0.1,ScU=0.1,SdU=0.1,SeU=0.1,SaR=0.1,SbR=0.1,ScR=0.1,SdR=0.1,SeR=0.1,VbU=0.125,VcU=0.125,VdU=0.125,VeU=0.125,VbR=0.125,VcR=0.125,VdR=0.125,VeR=0.125,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9)
-print(z)
-y = list(range(75, 100))
-x = list(range(0, 40))
+
+matrix = heatmapmatrix(10, covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9)
+
+array = np.asarray(matrix).reshape(5,5)	
+y = list(range(75, 80))
+x = list(range(0, 5))
+seaborn.heatmap(array)
+plt.show()
