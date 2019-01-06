@@ -1,11 +1,8 @@
-'''
-THIS CODE IS STILL IN PROCESS AND IS CURRENTLY UNFINISHED. Certain functions still do not produce the desired output or are faulty
-'''
 import numpy as np
 import seaborn
 import matplotlib.pyplot as plt
 
-def NextStep(covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9):
+def NextStep(covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.98,survbU=0.99,survcU=0.985,survdU=0.95,surveU=0.9,survaR=0.95,survbR=0.97,survcR=0.96,survdR=0.9,surveR=0.85):
     '''
     cov - coverage
     migpar - migration parameter relative to birth rate
@@ -73,7 +70,7 @@ def NextStep(covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU
     
     return(UrbanRates, RuralRates)
 
-def HerdImmunity(covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9):
+def HerdImmunity(covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.98,survbU=0.99,survcU=0.985,survdU=0.95,surveU=0.9,survaR=0.95,survbR=0.97,survcR=0.96,survdR=0.9,surveR=0.85):
     
     Urban, Rural = NextStep(covU, covR, migpar, br, R0, SaU, SbU, ScU, SdU, SeU, SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, survcU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR) 
     '''
@@ -84,13 +81,17 @@ def HerdImmunity(covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06
     TotVacc = Urban[1][1] + Urban[1][2] + Urban[1][3] + Urban[1][4]
     return(TotVacc > MinVacc)
 
-def OverTime(t, covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9):
-
+def OverTime(t, covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.98,survbU=0.99,survcU=0.985,survdU=0.93,surveU=0.88,survaR=0.95,survbR=0.97,survcR=0.96,survdR=0.88,surveR=0.84):
+    '''
+    Iterates through the NextStep function t times
+    Takes the same parameters as NextStep in addition to t
+    Returns a list with two tuples, each of which contains susceptibility and vaccination rates for Urban and Rural populations
+    '''
     for i in range(1, t+1):
         if i == t:
-            return(NextStep(covU, covR, migpar, br, R0, SaU, SbU, ScU, SdU, SeU, SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, surbcU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR))
+            return(NextStep(covU, covR, migpar, br, R0, SaU, SbU, ScU, SdU, SeU, SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR))
         else:
-            Urban, Rural = NextStep(covU, covR, migpar, br, R0, SaU, SbU, ScU, SdU, SeU, SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, surbcU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR)
+            Urban, Rural = NextStep(covU, covR, migpar, br, R0, SaU, SbU, ScU, SdU, SeU, SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR)
             
             SaU = Urban[0][0]
             SbU = Urban[0][1]
@@ -114,12 +115,16 @@ def OverTime(t, covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,
             VdR = Rural[1][3]
             VeR = Rural[1][4]   
 
-def LowestVacc(covU, Rural, migpar, R0):
+def LowestVacc(covU, Rural, migpar, herd):
     '''
-    migpar = percentage of people in Rural age group D that migrate
+    covU = decimal number representing proportion of an Urban population that is covered by vaccination
+    Rural = A list with two lists within that each represent susceptibility and vaccination rates for a rural population
+    migpar = percentage of people in rural age group D that migrate
+    herd = Lowest vaccination rate needed in the urban population to maintain herd immunity 
+    
+    Returns a value representing the lowest vaccination rate needed in the rural population for herd immunity
     '''
-    herd = 0.8
-    TotalMig = migpar * (Rural[0][3] + Rural[1][3])
+    TotalMig = migpar * (Rural[0][3] + Rural[1][3]) #Takes total migration from the rural population
     LowestVacc = ((herd * (1 + TotalMig))-covU) / TotalMig
     if LowestVacc < 0:
         return(0)
@@ -127,24 +132,42 @@ def LowestVacc(covU, Rural, migpar, R0):
         return(1)
     else:
         return(LowestVacc)
+def creatematrix(br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.98,survbU=0.99,survcU=0.985,survdU=0.95,surveU=0.9,survaR=0.95,survbR=0.97,survcR=0.96,survdR=0.9,surveR=0.85):
+    '''
+    Creates a matrix of lowest vaccination rates needed in a migrating rural population into an urban population
+    given various migration and urban vaccination rates
+    
+    Returns a list of lists
+    '''
+    matrix = []
+    herd = 1 - (1/R0)
+    Rural = [[SaR, SbR, ScR, SdR, SeR], [0, VbR, VcR, VdR, VeR]]
+    for i in range (0,21):
+        newcoverage = (i * 0.01) + 0.8
+        row = []
+        for j in range (1, 11):
+            newmigration = j * 0.1
+            rate = LowestVacc(newcoverage, Rural, newmigration, herd)
+            row.append(rate)
+        matrix.append(row)
+    return(matrix)
+      
+def heatmap(t = 100, covU = 0.8, covR=0.8, migpar = 0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.98,survbU=0.99,survcU=0.985,survdU=0.95,surveU=0.9,survaR=0.95,survbR=0.97,survcR=0.96,survdR=0.9,surveR=0.85):
+    '''
+    Creates a heatmap that uses the vaccination coverage of an urban population 
+    and the migration rate of a rural population of the axes
+    and the lowest vaccination rate needed to maintain herd immunity as the intensity of the map
+    '''
+    Urban, Rural = OverTime(t, covU, covR, migpar, br, R0, SaU, SbU, ScU, SdU, SeU, SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR)
+    matrix = creatematrix(br, R0, Urban[0][0], Urban[0][1], Urban[0][2], Urban[0][3], Urban[0][4], SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR)
+    array = np.asarray(matrix).reshape(21,10)	
+    y = (list(range(80, 101)))
+    x = list(range(1,11))
+    hm = seaborn.heatmap(array, xticklabels = x, yticklabels = y)
+    hm.collections[0].colorbar.set_label("Lowest Vaccination Rate")
+    hm.set_ylabel("Coverage Rate in Urban Population (Out of 100)")
+    hm.set_xlabel("Migration Rates from Rural Population (Out of 100)")
+    hm.set_title("Lowest Vaccination Rate Needed in a Migrating Rural Population Given Urban Coverage and Probability of Migration")
+    plt.show()
 
-def heatmapmatrix(t, covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9):
-	matrix = []
-	for i in range(0, 5):
-		newcoverage = (i * 0.01) + 0.75
-		row = []
-		for j in range(1, 6):
-			newmigration = j * 0.1 #migpar being increased
-			Urban, Rural = NextStep(covU=0.85, covR=0.8, migpar=newmigration, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9)
-			rate = LowestVacc(newcoverage, Rural, newmigration, R0)
-			row.append(rate)
-		matrix.append(row)
-	return(matrix)
-
-matrix = heatmapmatrix(10, covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.9,survbU=0.9,surbcU=0.9,survcU=0.9,survdU=0.9,surveU=0.9,survaR=0.9,survbR=0.9,survcR=0.9,survdR=0.9,surveR=0.9)
-
-array = np.asarray(matrix).reshape(5,5)	
-y = list(range(75, 80))
-x = list(range(0, 5))
-seaborn.heatmap(array)
-plt.show()
+heatmap()
