@@ -13,6 +13,10 @@ def NextStep(covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU
     
     In the below code, variables like SaUt show the next value of SaU in time step t
     '''
+    #NOTES AND THINGS TO CHANGE
+    #widen range x hm tp 30,change color using colormaps library (set to veritas vi/vis or magma), switch color. 
+    #learn/start latex, put bullet points in sections, overleaf
+     
     #Vaccination rate at birth is 0 for both rural and urban populations
     VaR = 0
     VaU = 0
@@ -132,42 +136,43 @@ def LowestVacc(covU, Rural, migpar, herd):
         return(1)
     else:
         return(LowestVacc)
-def creatematrix(br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.98,survbU=0.99,survcU=0.985,survdU=0.95,surveU=0.9,survaR=0.95,survbR=0.97,survcR=0.96,survdR=0.9,surveR=0.85):
-    '''
-    Creates a matrix of lowest vaccination rates needed in a migrating rural population into an urban population
-    given various migration and urban vaccination rates
-    
-    Returns a list of lists
-    '''
+
+def creatematrix(br=(18.1/1000), R0=10, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.98,survbU=0.99,survcU=0.985,survdU=0.95,surveU=0.9,survaR=0.95,survbR=0.97,survcR=0.96,survdR=0.9,surveR=0.85):
     matrix = []
-    herd = 1 - (1/R0)
     Rural = [[SaR, SbR, ScR, SdR, SeR], [0, VbR, VcR, VdR, VeR]]
-    for i in range (0,21):
-        newcoverage = (i * 0.01) + 0.8
+    if R0 == 5:
+        herd = 0.8
+        d1 = 21
+        ds = 0.01
+    elif R0 == 10:
+        herd = 0.90
+        d1 = 11
+        ds = 0.01
+    elif R0 == 20:
+        herd = 0.95
+        d1 = 11
+        ds = 0.005
+    for i in range (0,d1):
+        newcoverage = (i * ds) + herd
         row = []
-        for j in range (1, 11):
-            newmigration = j * 0.1
+        for j in range (1, 21):
+            newmigration = j * 0.05
             rate = LowestVacc(newcoverage, Rural, newmigration, herd)
             row.append(rate)
         matrix.append(row)
-    return(matrix)
-      
+    return(matrix, d1)
+
 def heatmap(t = 100, covU = 0.8, covR=0.8, migpar = 0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.98,survbU=0.99,survcU=0.985,survdU=0.95,surveU=0.9,survaR=0.95,survbR=0.97,survcR=0.96,survdR=0.9,surveR=0.85):
-    '''
-    Creates a heatmap that uses the vaccination coverage of an urban population 
-    and the migration rate of a rural population of the axes
-    and the lowest vaccination rate needed to maintain herd immunity as the intensity of the map
-    '''
     Urban, Rural = OverTime(t, covU, covR, migpar, br, R0, SaU, SbU, ScU, SdU, SeU, SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR)
-    matrix = creatematrix(br, R0, Urban[0][0], Urban[0][1], Urban[0][2], Urban[0][3], Urban[0][4], SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR)
-    array = np.asarray(matrix).reshape(21,10)	
-    y = (list(range(80, 101)))
-    x = list(range(1,11))
-    hm = seaborn.heatmap(array, xticklabels = x, yticklabels = y)
+    matrix, d1 = creatematrix(br, R0, Urban[0][0], Urban[0][1], Urban[0][2], Urban[0][3], Urban[0][4], SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR)
+    array = np.asarray(matrix).reshape(d1, 20)
+    y = list(range((101-d1), 101))
+    x = list(range(5, 101, 5))
+    hm = seaborn.heatmap(array, xticklabels = x, yticklabels = y, cmap="YlGnBu")
     hm.collections[0].colorbar.set_label("Lowest Vaccination Rate")
     hm.set_ylabel("Coverage Rate in Urban Population (Out of 100)")
     hm.set_xlabel("Migration Rates from Rural Population (Out of 100)")
-    hm.set_title("Lowest Vaccination Rate Needed in a Migrating Rural Population Given Urban Coverage and Probability of Migration")
+    title = "Lowest Vaccination Rate Needed in a Migrating Rural Population Given Urban Coverage and Probability of Migration, R0=" + str(R0)
+    hm.set_title(title)
     plt.show()
-
-heatmap()
+heatmap(R0=20)
