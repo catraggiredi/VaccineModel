@@ -1,6 +1,7 @@
 import numpy as np
 import seaborn
 import matplotlib.pyplot as plt
+import math
 
 def NextStep(covU=0.85, covR=0.8, migpar=0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.98,survbU=0.99,survcU=0.985,survdU=0.95,surveU=0.9,survaR=0.95,survbR=0.97,survcR=0.96,survdR=0.9,surveR=0.85):
     '''
@@ -206,14 +207,32 @@ def heatmap(t = 100, covU = 0.8, covR=0.8, migpar = 0.1, br=(18.1/1000), R0=5, S
     Urban, Rural = OverTime(t, covU, covR, migpar, br, R0, SaU, SbU, ScU, SdU, SeU, SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR)
     matrix, d1, ds = creatematrix(R0)
     array = np.asarray(matrix).reshape(d1, 50)
-    hm = seaborn.heatmap(array,cmap="YlGnBu", yticklabels = False, xticklabels = False)
+    hm = seaborn.heatmap(array,cmap="viridis", yticklabels = False, xticklabels = False)
     plt.show()
     
 def inverseheatmap(t = 100, covU = 0.8, covR=0.8, migpar = 0.1, br=(18.1/1000), R0=5, SaU=0.06,SbU=0.04,ScU=0.03,SdU=0.01,SeU=0.01,SaR=0.09,SbR=0.05,ScR=0.02,SdR=0.03,SeR=0.01,VbU=0.35,VcU=0.25,VdU=0.15,VeU=0.1,VbR=0.3,VcR=0.25,VdR=0.2,VeR=0.05,survaU=0.98,survbU=0.99,survcU=0.985,survdU=0.95,surveU=0.9,survaR=0.95,survbR=0.97,survcR=0.96,survdR=0.9,surveR=0.85):
     Urban, Rural = OverTime(t, covU, covR, migpar, br, R0, SaU, SbU, ScU, SdU, SeU, SaR, SbR, ScR, SdR, SeR, VbU, VcU, VdU, VeU, VbR, VcR, VdR, VeR, survaU, survbU, survcU, survdU, surveU, survaR, survbR, survcR, survdR, surveR)
     matrix, d1, ds = createinversematrix(R0)
     array = np.asarray(matrix).reshape(d1, 50)
-    hm = seaborn.heatmap(array,cmap="YlGnBu")
+    hm = seaborn.heatmap(array,cmap="viridis")
     plt.show()
     
-heatmap(R0=5)
+def divergingmap():
+    #Set R0 to 20
+    #Set covU to equal 1
+    #p(immune) = migpar(covR) + (1-migpar)*(covU)
+    #Simplify (1-p(immune))R0 
+    
+    matrix = []
+    for i in range (0,200):
+        newcoverage = 0.5 + (i * 0.0025)
+        row = []
+        for j in range (1, 51):
+            newmigration = j * 0.01
+            re = 20 * (newmigration * (1-newcoverage))
+            row.append(re)
+        matrix.append(row)
+    array = np.asarray(matrix).reshape(200, 50)
+    hm = seaborn.heatmap(array,cmap="seismic_r", center=1, yticklabels = False, xticklabels = False)
+    plt.show()
+    
